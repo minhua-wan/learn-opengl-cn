@@ -1,7 +1,7 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include <iostream>
-#include "Shader.h"
+#include <Shader.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -38,7 +38,7 @@ int main() {
 
 
 
-    Shader shader("./vertex.glsl", "./fragment.glsl");
+    Shader shader("chapter1/vertex.glsl", "chapter1/fragment.glsl");
 
     float vertices[] = {
          // position          // color

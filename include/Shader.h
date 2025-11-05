@@ -12,7 +12,7 @@ class Shader {
 public:
 	unsigned int ID;
 
-	Shader(const char* vertexPath, const char* fragmentPath) {
+	Shader(std::string vertexSubPath, std::string fragmentSubPath) {
 		std::string vertexCode;
 		std::string fragmentCode;
 		std::ifstream vShaderFile;
@@ -22,8 +22,8 @@ public:
 		fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
 		try {
-			vShaderFile.open(vertexPath);
-			fShaderFile.open(fragmentPath);
+			vShaderFile.open("./../../shader/" + vertexSubPath);
+			fShaderFile.open("./../../shader/" + fragmentSubPath);
 
 			std::stringstream vShaderStream, fShaderStream;
 			vShaderStream << vShaderFile.rdbuf();
