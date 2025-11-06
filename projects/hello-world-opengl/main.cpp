@@ -1,10 +1,9 @@
-#define STB_IMAGE_IMPLEMENTATION
-
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
-#include <stb_image.h>
 #include <Shader.h>
 #include <iostream>
+#include <ImageHelper.h>
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -81,53 +80,13 @@ int main() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    // Texture 1
-    unsigned int containerTexture;
-    glGenTextures(1, &containerTexture);
-    glBindTexture(GL_TEXTURE_2D, containerTexture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    stbi_set_flip_vertically_on_load(true);
-
-    int width, height, nrChannels;
-    unsigned char* containerImage = stbi_load("../../resource/container.jpg", &width, &height, &nrChannels, 0);
-    if (containerImage) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, containerImage);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-
-    stbi_image_free(containerImage);
-
-    // Texture 2
-    unsigned int awesomeTexture;
-    glGenTextures(1, &awesomeTexture);
-    glBindTexture(GL_TEXTURE_2D, awesomeTexture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    unsigned char* awesomeImage = stbi_load("../../resource/awesomeface.png", &width, &height, &nrChannels, 0);
-    if (awesomeImage) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, awesomeImage);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-
-    stbi_image_free(awesomeImage);
 
 
 
+    ImageHelper containerImageHelper{ true };
+    containerImageHelper.loadTexure("resource/container.jpg", GL_RGB);
+    ImageHelper awesomeImageHelper{ true };
+    awesomeImageHelper.loadTexure("resource/awesomeface.png", GL_RGBA);
     shader.use();
     shader.setInt("texture1", 0);
     shader.setInt("texture2", 1);
@@ -143,9 +102,9 @@ int main() {
 
         // draw texture
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, containerTexture);
+        glBindTexture(GL_TEXTURE_2D, containerImageHelper.getTexture());
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, awesomeTexture);
+        glBindTexture(GL_TEXTURE_2D, awesomeImageHelper.getTexture());
 
         shader.use();
         glBindVertexArray(VAO);
