@@ -3,6 +3,9 @@
 #include <Shader.h>
 #include <iostream>
 #include <ImageHelper.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -40,7 +43,7 @@ int main() {
 
 
 
-    Shader shader("chapter1/texture-vertex.glsl", "chapter1/texture-fragment.glsl");
+    Shader shader("chapter1/matrix-vertex.glsl", "chapter1/matrix-fragment.glsl");
 
     float vertices[] = {
         // positions        // colors          // texture coords
@@ -105,6 +108,12 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, containerImageHelper.getTexture());
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, awesomeImageHelper.getTexture());
+
+        glm::mat4 trans{ 1.0f };
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        unsigned int transformLocation = glGetUniformLocation(shader.ID, "transform");
+        glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(trans));
 
         shader.use();
         glBindVertexArray(VAO);
